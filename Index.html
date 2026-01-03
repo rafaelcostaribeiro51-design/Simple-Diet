@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Diet</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f4f6f8;
+      color: #333;
+    }
+    header {
+      background: #2ecc71;
+      padding: 20px;
+      text-align: center;
+      color: #fff;
+    }
+    header h1 {
+      font-size: 2.5rem;
+      margin: 0;
+    }
+    header span {
+      font-weight: bold;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+    .ingredients {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+    .ingredients input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .recipes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 15px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.03);
+    }
+    .card h3 {
+      margin-top: 0;
+      color: #2ecc71;
+    }
+    .nutrition {
+      font-size: 0.9rem;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+    }
+    .close {
+      float: right;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1><span>Simple Diet</span></h1>
+    <p><strong>Descubra receitas fitness usando os ingredientes que você já tem em casa.</strong></p>
+    <p>Coma melhor, economize tempo e acompanhe seus macros sem complicação.</p>
+    <button onclick="openCheckout()" style="margin-top:15px;">🍽️ Desbloquear receitas por R$ 29,90</button>
+  </header>
+
+  <div class="container">
+    <section class="ingredients">
+      <h2>🥗 Adicione seus ingredientes</h2>
+      <input type="text" placeholder="Ex: frango, arroz, ovos" />
+    </section>
+
+    <section id="sales" class="sales">
+      <h2>🔥 Transforme sua alimentação com o <span style="color:#2ecc71">Simple Diet</span></h2>
+      <p>Descubra receitas saudáveis, rápidas e econômicas usando apenas os ingredientes que você já tem em casa.</p>
+
+      <ul>
+        <li>🥗 Emagreça comendo bem</li>
+        <li>⏱️ Economize tempo e dinheiro</li>
+        <li>📊 Controle carboidratos, proteínas e gorduras</li>
+        <li>🔒 Conteúdo exclusivo para assinantes</li>
+      </ul>
+
+      <h3>Apenas <strong>R$ 29,90/mês</strong></h3>
+      <button onclick="openCheckout()">Quero ser assinante</button>
+    </section>
+
+    <section class="auth">
+      <h2>🔐 Login do Usuário</h2>
+      <input type="email" id="loginEmail" placeholder="E-mail" />
+      <input type="password" id="loginPass" placeholder="Senha" />
+      <button onclick="loginUser()">Entrar</button>
+      <p id="loginStatus"></p>
+    </section>
+
+    <section class="recipes">
+      <div class="card locked" onclick="openRecipe()">
+        <h3>Frango com Arroz Integral</h3>
+        <div class="nutrition">
+          <p>🍞 Carboidratos: 45g</p>
+          <p>🥩 Proteínas: 35g</p>
+          <p>🥑 Gorduras: 10g</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="subscription">
+      <h2>⭐ Assinatura <span style="color:#2ecc71">Simple Diet</span></h2>
+      <p>Acesse <strong>todas as receitas fit</strong>, descubra pratos com os ingredientes que você já tem em casa e acompanhe os <strong>macros detalhados</strong> para evoluir sua alimentação.</p>
+
+      <ul>
+        <li>✅ Receitas ilimitadas</li>
+        <li>✅ Informações nutricionais completas</li>
+        <li>✅ Novas receitas toda semana</li>
+        <li>✅ Acesso exclusivo para assinantes</li>
+      </ul>
+
+      <div class="price">
+        <strong>R$ 29,90</strong> / mês
+      </div>
+
+      <button onclick="openCheckout()">Assinar Agora</button>
+    </section>
+
+  </div>
+
+  <div class="modal" id="recipeModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">X</span>
+      <h2>Frango com Arroz Integral</h2>
+      <p><strong>Descrição:</strong> Uma refeição saudável e equilibrada, ideal para o dia a dia.</p>
+      <p><strong>Modo de preparo:</strong></p>
+      <ol>
+        <li>Cozinhe o arroz integral.</li>
+        <li>Grelhe o frango com pouco azeite.</li>
+        <li>Sirva o frango junto com o arroz.</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    let isSubscriber = false;
+
+    function loginUser() {
+      const email = document.getElementById('loginEmail').value;
+      const pass = document.getElementById('loginPass').value;
+
+      if (email && pass && localStorage.getItem('paid') === 'true') {
+        isSubscriber = true;
+        document.getElementById('loginStatus').innerText = '✅ Login realizado. Assinatura ativa!';
+      } else if (email && pass) {
+        document.getElementById('loginStatus').innerText = '❌ Assinatura não encontrada. Assine para continuar.';
+      } else {
+        document.getElementById('loginStatus').innerText = '❌ Preencha todos os campos.';
+      }
+    } else {
+        document.getElementById('loginStatus').innerText = '❌ Preencha todos os campos.';
+      }
+    }
+
+    function openRecipe() {
+      if (isSubscriber) {
+        document.getElementById('recipeModal').style.display = 'flex';
+      } else {
+        alert('🔒 Esta receita é exclusiva para assinantes do Simple Diet. Assine para desbloquear o acesso completo.');
+      }
+    }
+
+    function openCheckout() {
+      document.getElementById('checkoutModal').style.display = 'flex';
+    }
+    function closeCheckout() {
+      document.getElementById('checkoutModal').style.display = 'none';
+    }
+    function closeModal() {
+      document.getElementById('recipeModal').style.display = 'none';
+    }
+      function confirmPayment(e) {
+      e.preventDefault();
+      localStorage.setItem('paid', 'true');
+      alert('✅ Pagamento confirmado! Agora faça login para acessar as receitas.');
+      closeCheckout();
+    }
+  </script>
+
+  <div class="modal" id="checkoutModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeCheckout()">X</span>
+      <h2>Checkout - Simple Diet</h2>
+      <form onsubmit="confirmPayment(event)">
+        <label>Nome completo</label>
+        <input type="text" placeholder="Seu nome" required />
+
+        <label>E-mail</label>
+        <input type="email" placeholder="seu@email.com" required />
+
+        <h3>Forma de pagamento</h3>
+        <div class="payment">
+          <label><input type="radio" name="pay" checked /> 💳 Cartão de Crédito</label><br>
+          <label><input type="radio" name="pay" /> ⚡ Pix</label>
+        </div>
+
+        <button type="submit">Finalizar Assinatura - R$ 29,90</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openCheckout() {
+      document.getElementById('checkoutModal').style.display = 'flex';
+    }
+    function closeCheckout() {
+      document.getElementById('checkoutModal').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
